@@ -9,7 +9,7 @@
         <h1 class="text-center p-2">New Entry</h1>
     </div>
     <div class="container">
-        <form action="">
+        <form action="{% url 'new_entry' %}" method="POST">
             {% csrf_token %}
             <div class="form-group">
                 {{ form }}

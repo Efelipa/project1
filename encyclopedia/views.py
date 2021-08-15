@@ -41,7 +41,7 @@ def entry(request, entry):
     else:
         return render(request, "encyclopedia/entry.html", {
             "entry": markdown.convert(entry_page),
-            "entry_title": entry.capitalize(),
+            "entry_title": entry.upper(),
             "search_form": SearchForm(),
         })
 
@@ -65,10 +65,30 @@ def search(request):
 
 
 def new_entry(request):
-    return render(request, "encyclopedia/new_entry.html", {
-        "form": entry_form,
-        "search_form": SearchForm(),
-    })
+    if request.method == 'GET':
+        return render(request, "encyclopedia/new_entry.html", {
+            "form": entry_form,
+            "search_form": SearchForm(),
+        })
+    elif request.method == 'POST':
+        form = entry_form(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            description = form.cleaned_data['description']
+        else:
+            return render(request, "encyclopedia/new_entry.html", {
+                "form": entry_form,
+                "search_form": SearchForm(),
+            })
+
+        if util.get_entry(title):
+            return render(request, "encyclopedia/exist.html", {
+                "form": entry_form,
+                "search_form": SearchForm(),
+            })
+        else:
+            util.save_entry(title, description)
+            return redirect(reverse('entry', args=[title]))
 
 
 def random_page(request):
