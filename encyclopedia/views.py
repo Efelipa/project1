@@ -2,6 +2,8 @@ from django.shortcuts import render
 from markdown2 import Markdown
 from . import util
 from django import forms
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 
 
 class entry_form(forms.Form):
@@ -34,11 +36,18 @@ def entry(request, entry):
 
 
 # def search(request):
-#     if request.method == "POST":
-#         q = request.POST['q']
-
-#         return render(request, "search/search.html", {
-#             "name": q,
+#     query = request.GET.get('q', '')
+#     if(util.get_entry(query) is not None):
+#         return HttpResponseRedirect(reverse("entry", kwargs={'entry': query}))
+#     else:
+#         sub_entries = []
+#         for entry in util.list_entries():
+#             if search.upper() in entry.upper():
+#                 sub_entries.append(entry)
+#         return render(request, "encyclopedia/index.html", {
+#             "sub_entries": sub_entries,
+#             "search": True,
+#             "value": query,
 #         })
 
 
