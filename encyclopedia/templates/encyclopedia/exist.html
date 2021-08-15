@@ -1,1 +1,19 @@
-Sorry this page already exist
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    This Page Already Exist
+{% endblock %}
+
+{% block body %}
+    
+<div class="jumbotron">
+    <h1 class="text-center text-uppercase">
+        The page '{{title}}' already exists.
+    </h1>
+</div>
+<div class="container">
+    <div class="alert alert-danger">
+        <p>Sorry but this page already exists. But you can <a href="wiki/{{title}}">visit</a> now.</p>
+    </div>
+</div>
+{% endblock %}

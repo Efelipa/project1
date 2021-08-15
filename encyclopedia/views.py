@@ -85,10 +85,19 @@ def new_entry(request):
             return render(request, "encyclopedia/exist.html", {
                 "form": entry_form,
                 "search_form": SearchForm(),
+                'title': title,
             })
         else:
             util.save_entry(title, description)
             return redirect(reverse('entry', args=[title]))
+
+
+def edit_page(request):
+    title = "Hola"
+    return render(request, "encyclopedia/edit_page.html", {
+        "title": title,
+        "form": entry_form()
+    })
 
 
 def random_page(request):
