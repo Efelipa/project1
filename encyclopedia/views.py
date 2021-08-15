@@ -1,3 +1,4 @@
+import random
 from django.shortcuts import render, redirect
 from markdown2 import Markdown
 from . import util
@@ -68,3 +69,9 @@ def new_entry(request):
         "form": entry_form,
         "search_form": SearchForm(),
     })
+
+
+def random_page(request):
+    entries = util.list_entries()
+    selected = random.choice(entries)
+    return HttpResponseRedirect(reverse('entry', args=[selected]))
