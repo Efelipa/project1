@@ -35,3 +35,15 @@ def get_entry(title):
         return f.read().decode("utf-8")
     except FileNotFoundError:
         return None
+
+
+def related_search(title):
+    """
+    Adding this function to made my search work easier for me.
+    """
+    subEntries = []
+    for entry_name in list_entries():
+        if title.lower() in entry_name.lower() or entry_name.lower() in title.lower():
+            subEntries.append(entry_name)
+
+    return subEntries

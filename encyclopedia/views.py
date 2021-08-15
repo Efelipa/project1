@@ -1,9 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from markdown2 import Markdown
 from . import util
 from django import forms
 from django.urls import reverse
 from django.http import HttpResponseRedirect
+
+
+class SearchForm(forms.Form):
+    title = forms.CharField(label='', widget=forms.TextInput(attrs={
+        "class": "search",
+        "placeholder": "Search"
+    }))
 
 
 class entry_form(forms.Form):
@@ -17,7 +24,8 @@ class entry_form(forms.Form):
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
-        "entries": util.list_entries()
+        "entries": util.list_entries(),
+        "search_form": SearchForm(),
     })
 
 
@@ -27,31 +35,36 @@ def entry(request, entry):
     if entry_page is None:
         return render(request, "encyclopedia/noExisting.html", {
             "entry_title": entry,
+            "search_form": SearchForm(),
         })
     else:
         return render(request, "encyclopedia/entry.html", {
             "entry": markdown.convert(entry_page),
             "entry_title": entry.capitalize(),
+            "search_form": SearchForm(),
         })
 
 
-# def search(request):
-#     query = request.GET.get('q', '')
-#     if(util.get_entry(query) is not None):
-#         return HttpResponseRedirect(reverse("entry", kwargs={'entry': query}))
-#     else:
-#         sub_entries = []
-#         for entry in util.list_entries():
-#             if search.upper() in entry.upper():
-#                 sub_entries.append(entry)
-#         return render(request, "encyclopedia/index.html", {
-#             "sub_entries": sub_entries,
-#             "search": True,
-#             "value": query,
-#         })
+def search(request):
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            entry = util.get_entry(title)
+            print('search: ', title)
+            if entry:
+                return redirect(reverse('entry', args=[title]))
+            else:
+                related_search = util.related_search(title)
+                return render(request, "encyclopedia/search.html", {
+                    "search_form": SearchForm(),
+                    "related_search": related_search,
+                    "title": title,
+                })
 
 
 def new_entry(request):
     return render(request, "encyclopedia/new_entry.html", {
         "form": entry_form,
+        "search_form": SearchForm(),
     })

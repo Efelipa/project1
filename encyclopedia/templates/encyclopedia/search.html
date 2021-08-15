@@ -1,0 +1,30 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Results: {{title}}
+{% endblock %}
+
+{% block body %}
+{% if related_search %}
+    <div class="jumbotron">
+        <h1 class="text-center">Search Results: {{title}}</h1>        
+    </div>
+    <div class="container">
+        <h4>Related Results:</h4>
+        <ul>
+            {% for title in related_search %}
+                <li><a href="wiki/{{ title }}">{{ title }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+{% else %}
+    <div class="jumbotron">
+        <h1 class="text-center">Are you looking for: {{title}}?</h1>
+    </div>    
+    <div class="container">
+        <div class="alert alert-danger">
+            <p>Sorry but this page is not available. But you can go to <a href="{% url 'index' %}">index</a>.</p>
+        </div>
+    </div>
+        {% endif %}
+{% endblock %}
