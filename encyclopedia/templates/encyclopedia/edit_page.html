@@ -9,10 +9,10 @@
         <h1 class="text-center p-2">Edit {{title}}</h1>
     </div>
     <div class="container">
-        <form action="{% url 'new_entry' %}" method="POST">
+        <form action="{% url 'edit_page' title='entry_title' %}" method="POST">
             {% csrf_token %}
             <div class="form-group">
-                {{ form }}
+                {{ edit_form }}
             </div>
             <div class="form-group">
                 <input class="btn btn-primary" type="submit" value="Save">

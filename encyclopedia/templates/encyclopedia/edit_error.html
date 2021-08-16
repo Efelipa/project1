@@ -1,0 +1,16 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Edit: ERROR
+{% endblock %}
+
+{% block body %}
+    <div class="jumbotron">
+        <h1 class="text-center p-2 text-uppercase">Something went wrong!{{title}}</h1>
+    </div>
+    <div class="container">
+        <div class="alert alert-danger">
+            <p>Sorry but this page is not available for edit. But you can <a href="{% url 'new_entry'%}">add</a> a new entry</p>
+        </div>
+    </div>
+{% endblock %}

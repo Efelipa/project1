@@ -1,4 +1,5 @@
 import random
+from re import S
 from django.shortcuts import render, redirect
 from markdown2 import Markdown
 from . import util
@@ -23,6 +24,11 @@ class entry_form(forms.Form):
         initial=False, widget=forms.HiddenInput, required=False)
 
 
+class edit_form(forms.Form):
+    entry = forms.CharField(label="", widget=forms.Textarea(
+        attrs={'class': 'form-control', "placeholder": "Edit Page Content"}))
+
+
 def index(request):
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries(),
@@ -41,7 +47,7 @@ def entry(request, entry):
     else:
         return render(request, "encyclopedia/entry.html", {
             "entry": markdown.convert(entry_page),
-            "entry_title": entry.upper(),
+            "entry_title": entry,
             "search_form": SearchForm(),
         })
 
@@ -92,12 +98,29 @@ def new_entry(request):
             return redirect(reverse('entry', args=[title]))
 
 
-def edit_page(request):
-    title = "Hola"
-    return render(request, "encyclopedia/edit_page.html", {
-        "title": title,
-        "form": entry_form()
-    })
+def edit(request, title):
+    if request.method == 'GET':
+        entry = util.get_entry(title)
+        if entry == None:
+            return render(request, "encyclopedia/edit_error.html", {
+                "title": title,
+                "edit_form": edit_form(initial={'entry': entry}),
+                "search_form": SearchForm(),
+            })
+
+    else:
+        form = edit_form(request.POST)
+
+        if form.is_valid():
+            entry = form.cleaned_data['entry']
+            util.save_entry(title, entry)
+            return redirect(reverse('entry', args=[title]))
+        else:
+            return render(request, "encyclopedia/edit_page.html", {
+                "title": title,
+                "form": edit_form(),
+                "search_form": SearchForm(),
+            })
 
 
 def random_page(request):

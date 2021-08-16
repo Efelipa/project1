@@ -12,6 +12,6 @@
     </div>
     <div class="container">
         {{ entry | safe }}
-        <a class="btn btn-outline-secondary" href="">Edit</a>
+        <a class="btn btn-outline-secondary" href="{% url 'edit_page' title=entry_title %}">Edit</a>
     </div>
 {% endblock %}
