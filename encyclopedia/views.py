@@ -5,7 +5,7 @@ from markdown2 import Markdown
 from . import util
 from django import forms
 from django.urls import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, request
 
 
 class SearchForm(forms.Form):
@@ -13,6 +13,9 @@ class SearchForm(forms.Form):
         "class": "search",
         "placeholder": "Search"
     }))
+
+
+markdown = Markdown()
 
 
 class entry_form(forms.Form):
@@ -37,7 +40,6 @@ def index(request):
 
 
 def entry(request, entry):
-    markdown = Markdown()
     entry_page = util.get_entry(entry)
     if entry_page is None:
         return render(request, "encyclopedia/noExisting.html", {
@@ -100,25 +102,21 @@ def new_entry(request):
 
 def edit(request, title):
     if request.method == 'GET':
-        entry = util.get_entry(title)
-        if entry == None:
-            return render(request, "encyclopedia/edit_error.html", {
-                "title": title,
-                "edit_form": edit_form(initial={'entry': entry}),
-                "search_form": SearchForm(),
-            })
-
-    else:
+        getentry = util.get_entry(title)
+        return render(request, "encyclopedia/edit_page.html", {
+            "edit": edit_form(initial={'entry': getentry}),
+            "title": title,
+        })
+    elif request.method == 'POST':
         form = edit_form(request.POST)
-
         if form.is_valid():
             entry = form.cleaned_data['entry']
             util.save_entry(title, entry)
-            return redirect(reverse('entry', args=[title]))
+            return redirect(reverse("entry", args=[title]))
         else:
-            return render(request, "encyclopedia/edit_page.html", {
+            return render(request, "encyclopedia/edit.html", {
                 "title": title,
-                "form": edit_form(),
+                "edit": form,
                 "search_form": SearchForm(),
             })
 
